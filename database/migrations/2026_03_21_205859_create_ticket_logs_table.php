@@ -30,10 +30,8 @@ return new class extends Migration
             // O texto do comentário em si
             $table->text('comment')->nullable(); 
 
-            // --- A MECÂNICA NOVA (O Escudo) ---
             // Define se o texto vai pro HUD do cidadão ou fica só no painel interno
             $table->boolean('is_public')->default(false);
-
             $table->timestamps();
             
             // A tua regra de "excluir se estiver errado" sem quebrar a rastreabilidade
