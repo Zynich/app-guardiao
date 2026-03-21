@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'cpf',
+        'phone',
+        'badge_number',
     ];
 
     /**
@@ -43,6 +47,33 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => \App\Enums\UserRole::class,
         ];
+    }
+
+    // --- RELACIONAMENTOS ---
+
+    /**
+     * Chamados atribuídos a este usuário (agente).
+     */
+    public function assignedTickets()
+    {
+        return $this->hasMany(Ticket::class, 'user_id');
+    }
+
+    /**
+     * Chamados criados por este usuário (agente).
+     */
+    public function createdTickets()
+    {
+        return $this->hasMany(Ticket::class, 'created_by_id');
+    }
+
+    /**
+     * Logs de ações realizadas por este usuário.
+     */
+    public function logs()
+    {
+        return $this->hasMany(TicketLog::class);
     }
 }

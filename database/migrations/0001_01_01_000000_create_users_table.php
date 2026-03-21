@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
+            // Dados Pessoais
+            $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('cpf')->unique()->nullable();
+            $table->string('phone')->nullable();
+            $table->string('badge_number')->nullable(); // Matrícula/Registro do agente
+
+            // Controle de Acesso e Auditoria
             $table->string('role')->default('agente_campo');
-            $table->boolean('is_active')->default(true);
-            $table->timestamp('last_login_at')->nullable();
+            $table->boolean('is_active')->default(true); 
+            $table->timestamp('last_login_at')->nullable(); 
+
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
