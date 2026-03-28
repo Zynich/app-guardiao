@@ -24,7 +24,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        try {
+            $request->authenticate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Explicitly returning all input (including password) for UX/TCC testing purposes
+            return back()->withInput($request->all())->withErrors($e->errors());
+        }
 
         $request->session()->regenerate();
 
