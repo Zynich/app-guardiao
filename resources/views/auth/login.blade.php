@@ -1,17 +1,15 @@
 <x-guest-layout>
-    <div class="flex-1 w-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-guardiao-dark to-black">
+    <div class="flex-1 w-full flex flex-col items-center justify-center p-6 bg-surface-darker">
         <div class="mb-10 text-center flex flex-col items-center">
-            <x-admin-shield-logo class="w-20 h-20 mb-6" />
+            <x-brand.admin-logo class="w-20 h-20 mb-6" />
             <h2 class="text-4xl font-extrabold text-white tracking-tight mb-2">Painel Administrativo</h2>
             <p class="text-zinc-400 text-lg font-medium opacity-80">Acesso Restrito ao Servidor</p>
         </div>
 
         <div class="w-full max-w-md">
-            <div class="bg-guardiao-card border border-zinc-800/50 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden group mb-6">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-guardiao-brand-start to-guardiao-brand-end opacity-20 group-hover:opacity-100 transition-opacity"></div>
-                
+            <x-ui.card class="mb-6">
                 <!-- Session Status -->
-                <x-auth-session-status class="mb-4" :status="session('status')" />
+                <x-ui.session-status class="mb-4" :status="session('status')" />
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6" x-data="{ loading: false, showPassword: false, showError: false }" x-init="if({{ $errors->any() ? 'true' : 'false' }}) { setTimeout(() => showError = true, 100) }" @submit="loading = true" novalidate>
                     @csrf
@@ -56,14 +54,14 @@
 
                     <!-- Email Address -->
                     <div class="space-y-2">
-                        <x-input-label for="email" :value="__('E-mail')" class="text-zinc-400 text-xs ml-1" />
+                        <x-ui.label for="email" :value="__('E-mail')" class="text-zinc-400 text-xs ml-1" />
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-guardiao-brand-end transition-colors">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary-variant transition-colors">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <x-text-input 
+                            <x-ui.input 
                                 id="email" 
                                 class="block w-full pl-12" 
                                 type="email" 
@@ -78,14 +76,14 @@
 
                     <!-- Password -->
                     <div class="space-y-2">
-                        <x-input-label for="password" :value="__('Senha')" class="text-zinc-400 text-xs ml-1" />
+                        <x-ui.label for="password" :value="__('Senha')" class="text-zinc-400 text-xs ml-1" />
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-guardiao-brand-end transition-colors">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary-variant transition-colors">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                             </div>
-                            <x-text-input 
+                            <x-ui.input 
                                 id="password" 
                                 class="block w-full pl-12 pr-12"
                                 ::type="showPassword ? 'text' : 'password'"
@@ -109,12 +107,12 @@
                     </div>
 
                     <div class="pt-4">
-                        <x-primary-button>
+                        <x-ui.button>
                             Entrar no Sistema
-                        </x-primary-button>
+                        </x-ui.button>
                     </div>
                 </form>
-            </div>
+            </x-ui.card>
             
             <div class="w-full text-center text-zinc-700 text-[10px] tracking-widest uppercase py-2">
                 Sistema Interno v1.0.0-MVP
