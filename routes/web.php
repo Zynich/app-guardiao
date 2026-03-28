@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('portal.index');
+    $categories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
+    return view('portal.index', compact('categories'));
 });
 
 Route::get('/dashboard', function () {
