@@ -3,8 +3,12 @@
     <main x-data="{ 
         step: 0, 
         loading: false,
+        search: '',
+        showCategories: false,
+        charLimit: 1000,
         formData: {
             category_id: '',
+            category_name: '',
             description: '',
             address: '',
             reference_point: '',

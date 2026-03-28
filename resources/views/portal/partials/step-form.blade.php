@@ -61,28 +61,90 @@
                 </p>
 
                 <div class="space-y-6">
-                    <div class="space-y-3">
-                        <x-ui.label value="Categoria do Problema" class="text-zinc-500 ml-1" />
-                        <x-ui.select name="category_id" placeholder="Selecione o tipo de incidente"
-                            @change="formData.category_id = $event.detail">
-                            @foreach ($categories as $category)
-                                <button type="button" @click="select('{{ $category->id }}', '{{ $category->name }}')"
-                                    class="w-full text-left px-4 py-3 text-sm text-zinc-300 hover:bg-primary-variant/10 hover:text-primary-variant rounded-lg transition-all duration-200 flex items-center justify-between group/opt">
-                                    <span>{{ $category->name }}</span>
-                                    <svg x-show="selected == '{{ $category->id }}'" class="w-4 h-4 text-primary-variant"
-                                        fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            @endforeach
-                        </x-ui.select>
+                    <div class="space-y-4" x-data="{ 
+                        get filtered() { 
+                            return this.search === '' ? true : true 
+                        } 
+                    }">
+                        <div class="flex items-center justify-between px-1">
+                            <x-ui.label value="Qual o problema?" class="text-white font-black" />
+                            <span class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest" x-text="formData.category_id ? 'Toque para mudar' : 'Toque para selecionar'"></span>
+                        </div>
+
+                        <!-- Selected Category Display (Single Card) -->
+                        <div x-show="formData.category_id && !showCategories" 
+                             x-transition:enter="transition ease-out duration-300 transform"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100" 
+                             class="flex justify-center py-2">
+                            <button type="button" 
+                                    @click="showCategories = true"
+                                    class="group p-6 rounded-2xl border bg-primary-variant/10 border-primary-variant/50 shadow-[0_0_20px_rgba(23,162,184,0.15)] flex flex-col items-center justify-center gap-3 transition-all hover:bg-primary-variant/20 hover:border-primary-variant min-w-[200px]">
+                                <div class="bg-primary-variant text-white p-2 rounded-lg shadow-lg">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-white uppercase tracking-tighter" x-text="formData.category_name"></span>
+                                <span class="text-[10px] text-primary-variant font-black uppercase tracking-[0.2em] opacity-80 underline underline-offset-4">Toque para trocar</span>
+                            </button>
+                        </div>
+
+                        <!-- Search & Selection Area -->
+                        <div x-show="!formData.category_id || showCategories" 
+                             class="space-y-4"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 -translate-y-4"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             @click.away="if(formData.category_id) showCategories = false">
+                            
+                            <!-- Search Box -->
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-primary-variant transition-colors">
+                                    <svg class="w-5 h-5 transition-transform" :class="search.length > 0 ? 'scale-110' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </div>
+                                <input x-model="search" 
+                                       @focus="showCategories = true"
+                                       type="text" 
+                                       placeholder="Resuma o problema em uma palavra..." 
+                                       class="w-full bg-surface-darker/60 border border-zinc-800 text-white rounded-2xl pl-12 pr-4 py-3 text-sm focus:border-primary-variant/50 focus:ring-1 focus:ring-primary-variant/50 transition-all placeholder:text-zinc-600 font-bold shadow-inner">
+                            </div>
+
+                            <!-- Categories Grid (Appears on Focus or No Selection) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar p-1">
+                                @foreach ($categories as $category)
+                                    <button type="button" 
+                                            x-show="'{{ strtolower($category->name) }}'.includes(search.toLowerCase())"
+                                            @click="formData.category_id = '{{ $category->id }}'; formData.category_name = '{{ $category->name }}'; showCategories = false; search = ''"
+                                            class="p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center text-center gap-2 group/card bg-surface-darker/40 border-zinc-800/50 hover:border-primary-variant/40 hover:bg-surface-darker shadow-sm active:scale-95">
+                                        <span class="text-[11px] font-black uppercase tracking-tight text-zinc-400 group-hover/card:text-zinc-100">{{ $category->name }}</span>
+                                    </button>
+                                @endforeach
+                                @if($categories->isEmpty())
+                                    @php
+                                        $mocks = ['Buraco na Via', 'Iluminação', 'Vazamento Água', 'Lixo Acumulado', 'Poda Árvore', 'Obras Paradas'];
+                                    @endphp
+                                    @foreach($mocks as $index => $mock)
+                                        <button type="button" 
+                                                x-show="'{{ strtolower($mock) }}'.includes(search.toLowerCase())"
+                                                @click="formData.category_id = '{{ $index + 1 }}'; formData.category_name = '{{ $mock }}'; showCategories = false; search = ''"
+                                                class="p-4 rounded-xl border transition-all duration-300 flex flex-col items-center justify-center text-center gap-2 group/card bg-surface-darker/40 border-zinc-800/50 hover:border-primary-variant/40 hover:bg-surface-darker shadow-sm active:scale-95">
+                                            <span class="text-[11px] font-black uppercase tracking-tight text-zinc-400 group-hover/card:text-zinc-100">{{ $mock }}</span>
+                                        </button>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="space-y-3">
-                        <x-ui.label value="Descrição dos Detalhes" class="text-zinc-500 ml-1" />
+                    <div class="space-y-3 pt-4 border-t border-zinc-800/30">
+                        <div class="flex items-center justify-between px-1">
+                            <x-ui.label value="Descrição Detalhada" class="text-white font-black" />
+                            <span class="text-[10px] font-bold tracking-widest uppercase"
+                                  :class="formData.description.length > charLimit ? 'text-red-500' : 'text-zinc-500'">
+                                <span x-text="formData.description.length"></span>/<span x-text="charLimit"></span>
+                            </span>
+                        </div>
                         <x-ui.textarea x-model="formData.description"
+                            maxlength="1000"
                             placeholder="Descreva aqui o problema de forma clara..." />
                     </div>
                 </div>
