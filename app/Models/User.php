@@ -4,27 +4,19 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'cpf',
-        'phone',
-        'badge_number',
+        'name', 'email', 'password', 'role',
+        'cpf', 'phone', 'badge_number',
+        'is_active', 'last_login_at',
     ];
 
     /**
@@ -46,9 +38,31 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => \App\Enums\UserRole::class,
+            'last_login_at'     => 'datetime',
+            'is_active'         => 'boolean',
+            'password'          => 'hashed',
+            'role'              => \App\Enums\UserRole::class,
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === \App\Enums\UserRole::ADMIN;
+    }
+
+    public function isDespachante(): bool
+    {
+        return $this->role === \App\Enums\UserRole::DESPACHANTE;
+    }
+
+    public function isAgente(): bool
+    {
+        return $this->role === \App\Enums\UserRole::AGENTE;
+    }
+
+    public function hasRole(\App\Enums\UserRole ...$roles): bool
+    {
+        return in_array($this->role, $roles, true);
     }
 
     // --- RELACIONAMENTOS ---

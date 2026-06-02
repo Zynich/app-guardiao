@@ -13,11 +13,15 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Operador Administrativo',
-            'email' => 'servidor@pref.gov.br',
-            'password' => Hash::make('password'),
-            'email_verified_at' => now(),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'servidor@pref.gov.br'],
+            [
+                'name'               => 'Operador Administrativo',
+                'password'           => Hash::make('password'),
+                'role'               => \App\Enums\UserRole::ADMIN,
+                'is_active'          => true,
+                'email_verified_at'  => now(),
+            ]
+        );
     }
 }

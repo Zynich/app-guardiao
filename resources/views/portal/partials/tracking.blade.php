@@ -1,4 +1,9 @@
-<div x-show="step === 0" x-transition:enter="transition ease-out duration-500 delay-200" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="w-full max-w-4xl px-6 flex flex-col items-center">
+<div x-show="step === 0"
+     x-transition:enter="transition ease-out duration-500 delay-200"
+     x-transition:enter-start="opacity-0 translate-y-4"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     class="w-full max-w-4xl px-6 flex flex-col items-center">
+
     <x-ui.card class="max-w-2xl p-8 rounded-3xl w-full border border-zinc-800/50 backdrop-blur-md">
         <div class="flex items-center gap-3 mb-6">
             <div class="bg-primary-variant/10 p-2 rounded-lg">
@@ -11,9 +16,15 @@
             </h3>
         </div>
 
-        <form action="#" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-4" x-data="{ localLoading: false }" @submit="localLoading = true">
+        <form action="{{ route('portal.track') }}" method="GET"
+              class="grid grid-cols-1 sm:grid-cols-4 gap-4"
+              x-data="{ localLoading: false }" @submit="localLoading = true">
             <div class="sm:col-span-3">
-                <x-ui.input type="text" name="protocol" placeholder="Protocolo (ex: 2026-ABC123)" class="w-full h-full" required />
+                <x-ui.input type="text" name="protocol"
+                             placeholder="Protocolo (ex: 2026-ABC123)"
+                             class="w-full h-full uppercase"
+                             value="{{ request('protocol') }}"
+                             required />
             </div>
             <div class="sm:col-span-1">
                 <x-ui.button type="submit" class="w-full h-full py-4 sm:py-0" ::disabled="localLoading">
