@@ -9,6 +9,7 @@ export function portalApp() {
         protocol: '',
         dragOver: false,
         copied: false,
+        photoFeedback: 0,
         leafletMap: null,
         leafletMarker: null,
 
@@ -130,15 +131,26 @@ export function portalApp() {
 
         handleFileSelect(event) {
             const files = Array.from(event.target.files).filter((f) => f.type.startsWith('image/'));
-            this.formData.photos = [...this.formData.photos, ...files].slice(0, 5);
+            this._addPhotos(files);
             event.target.value = '';
         },
 
         handleDrop(event) {
             event.preventDefault();
             const files = Array.from(event.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
-            this.formData.photos = [...this.formData.photos, ...files].slice(0, 5);
+            this._addPhotos(files);
             this.dragOver = false;
+        },
+
+        _addPhotos(files) {
+            const before = this.formData.photos.length;
+            this.formData.photos = [...this.formData.photos, ...files].slice(0, 5);
+            const added = this.formData.photos.length - before;
+            if (added > 0) {
+                this.photoFeedback = added;
+                clearTimeout(this._photoFeedbackTimer);
+                this._photoFeedbackTimer = setTimeout(() => { this.photoFeedback = 0; }, 2500);
+            }
         },
 
         removePhoto(index) {
@@ -176,6 +188,7 @@ export function portalApp() {
         },
 
         async submitTicket() {
+            if (this.loading) return;
             this.loading = true;
             this.errors  = {};
 

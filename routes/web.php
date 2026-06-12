@@ -13,7 +13,7 @@ Route::get('/', function () {
 })->name('portal.index');
 
 Route::post('/ocorrencias', [PortalTicketController::class, 'store'])
-    ->middleware('throttle:3,60')
+    ->middleware('throttle:10,60')
     ->name('portal.tickets.store');
 
 Route::get('/protocolo', [PortalTicketController::class, 'track'])

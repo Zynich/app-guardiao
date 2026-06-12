@@ -343,6 +343,19 @@
                         </template>
                     </div>
 
+                    <div x-show="photoFeedback > 0"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-end="opacity-0"
+                         class="flex items-center gap-2 text-green-400 text-xs font-bold px-1 mt-1">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span x-text="photoFeedback === 1 ? '1 foto adicionada!' : photoFeedback + ' fotos adicionadas!'"></span>
+                    </div>
+
                     <p x-show="hasError('photos')" x-text="getError('photos')"
                        class="text-red-400 text-xs font-bold mt-1 px-1"></p>
                 </div>
@@ -372,7 +385,7 @@
             </x-ui.button>
 
             <!-- Finalizar (step 3) -->
-            <x-ui.button x-show="step === 3" type="button" @click="submitTicket()" ::disabled="loading"
+            <x-ui.button x-show="step === 3" type="button" @click="submitTicket()" x-bind:disabled="loading"
                          class="w-full sm:w-auto px-12 py-3.5">
                 <span x-show="!loading" class="flex items-center gap-2">
                     Finalizar Relato
