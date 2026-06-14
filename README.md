@@ -54,6 +54,8 @@ docker run --rm \
     composer install --ignore-platform-reqs
 ```
 
+> **⚠️ Não execute `php artisan sail:install`.** O arquivo `compose.yaml` já está configurado para o projeto (nomes de containers, banco de dados, rede). Rodar `sail:install` sobrescreve esse arquivo com um template padrão do Laravel, alterando o banco para `laravel` e quebrando a configuração personalizada.
+
 ### 4. Suba a infraestrutura Docker
 
 ```bash
