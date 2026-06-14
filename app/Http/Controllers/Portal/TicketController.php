@@ -12,6 +12,7 @@ use App\Models\TicketLog;
 use App\Models\TicketMedia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -24,36 +25,41 @@ class TicketController extends Controller
         $protocol = $this->generateProtocol();
         $dueDate  = $category->sla_hours ? now()->addHours($category->sla_hours) : null;
 
-        $ticket = Ticket::create([
-            'protocol'        => $protocol,
-            'citizen_name'    => $request->citizen_name,
-            'citizen_email'   => $request->citizen_email,
-            'citizen_phone'   => $request->citizen_phone,
-            'citizen_cpf'     => $request->citizen_cpf,
-            'category_id'     => $category->id,
-            'status'          => TicketStatus::PENDENTE_TRIAGEM,
-            'priority'        => $category->priority,
-            'description'     => $request->description,
-            'address'         => $request->address,
-            'reference_point' => $request->reference_point,
-            'latitude'        => $request->latitude,
-            'longitude'       => $request->longitude,
-            'due_date'        => $dueDate,
-        ]);
+        try {
+            $ticket = Ticket::create([
+                'protocol'        => $protocol,
+                'citizen_name'    => $request->citizen_name,
+                'citizen_email'   => $request->citizen_email,
+                'citizen_phone'   => $request->citizen_phone,
+                'citizen_cpf'     => $request->citizen_cpf,
+                'category_id'     => $category->id,
+                'status'          => TicketStatus::PENDENTE_TRIAGEM,
+                'priority'        => $category->priority,
+                'description'     => $request->description,
+                'address'         => $request->address,
+                'reference_point' => $request->reference_point,
+                'latitude'        => $request->latitude,
+                'longitude'       => $request->longitude,
+                'due_date'        => $dueDate,
+            ]);
 
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store("tickets/{$protocol}", 'public');
-                TicketMedia::create([
-                    'ticket_id' => $ticket->id,
-                    'file_path' => $path,
-                    'file_type' => $photo->getMimeType(),
-                ]);
-                TicketLog::logMediaAdded($ticket->id, null, $photo->getClientOriginalName());
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    $path = $photo->store("tickets/{$protocol}", 'public');
+                    TicketMedia::create([
+                        'ticket_id' => $ticket->id,
+                        'file_path' => $path,
+                        'file_type' => $photo->getMimeType(),
+                    ]);
+                    TicketLog::logMediaAdded($ticket->id, null, $photo->getClientOriginalName());
+                }
             }
-        }
 
-        TicketLog::logCreated($ticket->id);
+            TicketLog::logCreated($ticket->id);
+        } catch (\Throwable $e) {
+            Log::error('Erro ao criar ocorrência: ' . $e->getMessage());
+            return response()->json(['message' => 'Erro ao salvar a ocorrência. Tente novamente.'], 500);
+        }
 
         // Envia confirmação ao cidadão — falha silenciosa para não bloquear o protocolo
         try {

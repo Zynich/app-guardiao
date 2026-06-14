@@ -1,16 +1,24 @@
 @php $category = $category ?? null; @endphp
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-    <div class="sm:col-span-2 space-y-2">
-        <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nome *</label>
-        <input type="text" name="name" value="{{ old('name', $category?->name) }}" required
+    <div class="sm:col-span-2 space-y-2" x-data="{ count: {{ strlen(old('name', $category?->name ?? '')) }} }">
+        <div class="flex items-center justify-between">
+            <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nome *</label>
+            <span class="text-[10px] text-zinc-600" x-text="count + '/30'"></span>
+        </div>
+        <input type="text" name="name" value="{{ old('name', $category?->name) }}" required maxlength="30"
+               @input="count = $event.target.value.length"
                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all @error('name') border-red-500 @enderror">
         @error('name') <p class="text-red-400 text-xs font-bold">{{ $message }}</p> @enderror
     </div>
 
-    <div class="sm:col-span-2 space-y-2">
-        <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Descrição</label>
-        <textarea name="description" rows="3"
+    <div class="sm:col-span-2 space-y-2" x-data="{ count: {{ strlen(old('description', $category?->description ?? '')) }} }">
+        <div class="flex items-center justify-between">
+            <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Descrição</label>
+            <span class="text-[10px] text-zinc-600" x-text="count + '/1000'"></span>
+        </div>
+        <textarea name="description" rows="3" maxlength="1000"
+                  @input="count = $event.target.value.length"
                   placeholder="Descreva brevemente quais problemas se enquadram nesta categoria..."
                   class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-primary-variant focus:ring-primary-variant resize-none transition-all">{{ old('description', $category?->description) }}</textarea>
     </div>

@@ -1,3 +1,6 @@
+import { applyMaskCpf, applyMaskPhone } from './masks';
+import { checkCpf } from './validators';
+
 export function portalApp() {
     return {
         step: 0,
@@ -10,6 +13,7 @@ export function portalApp() {
         dragOver: false,
         copied: false,
         photoFeedback: 0,
+        cpfError: '',
         leafletMap: null,
         leafletMarker: null,
 
@@ -169,6 +173,22 @@ export function portalApp() {
             return this.errors[field] ? this.errors[field][0] : '';
         },
 
+        validateCpf() {
+            this.cpfError = checkCpf(this.formData.cpf);
+        },
+
+        maskCpf(e) {
+            const v = applyMaskCpf(e.target.value);
+            e.target.value = v;
+            this.formData.cpf = v;
+        },
+
+        maskPhone(e) {
+            const m = applyMaskPhone(e.target.value);
+            e.target.value = m;
+            this.formData.phone = m;
+        },
+
         copyProtocol() {
             navigator.clipboard.writeText(this.protocol).then(() => {
                 this.copied = true;
@@ -221,6 +241,11 @@ export function portalApp() {
                 if (!response.ok) {
                     if (response.status === 429) {
                         alert('Muitas tentativas em pouco tempo. Aguarde 60 minutos e tente novamente.');
+                        this.loading = false;
+                        return;
+                    }
+                    if (response.status >= 500) {
+                        alert(data.message ?? 'Erro interno ao salvar. Tente novamente.');
                         this.loading = false;
                         return;
                     }

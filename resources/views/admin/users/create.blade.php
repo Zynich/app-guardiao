@@ -17,14 +17,14 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="sm:col-span-2 space-y-2">
                         <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Nome Completo *</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required
+                        <input type="text" name="name" value="{{ old('name') }}" required maxlength="255"
                                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all @error('name') border-red-500 @enderror">
                         @error('name') <p class="text-red-400 text-xs font-bold">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="space-y-2">
                         <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">E-mail *</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required
+                        <input type="email" name="email" value="{{ old('email') }}" required maxlength="255"
                                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all @error('email') border-red-500 @enderror">
                         @error('email') <p class="text-red-400 text-xs font-bold">{{ $message }}</p> @enderror
                     </div>
@@ -70,22 +70,25 @@
 
                     <div class="space-y-2">
                         <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Matrícula / Registro</label>
-                        <input type="text" name="badge_number" value="{{ old('badge_number') }}"
+                        <input type="text" name="badge_number" value="{{ old('badge_number') }}" maxlength="20"
                                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all @error('badge_number') border-red-500 @enderror">
                         @error('badge_number') <p class="text-red-400 text-xs font-bold">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="space-y-2" x-data="inputMasks()">
                         <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">Telefone</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}"
+                        <input type="text" name="phone" value="{{ old('phone') }}" maxlength="15" inputmode="numeric"
+                               @input="maskPhone($event)"
                                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all">
                     </div>
 
-                    <div class="space-y-2">
+                    <div class="space-y-2" x-data="inputMasks()">
                         <label class="block text-[10px] font-black text-zinc-500 uppercase tracking-widest">CPF</label>
-                        <input type="text" name="cpf" value="{{ old('cpf') }}"
+                        <input type="text" name="cpf" value="{{ old('cpf') }}" maxlength="14" inputmode="numeric"
+                               @input="maskCpf($event)" @blur="validateCpf($event)"
                                class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm focus:border-primary-variant focus:ring-primary-variant transition-all @error('cpf') border-red-500 @enderror">
                         @error('cpf') <p class="text-red-400 text-xs font-bold">{{ $message }}</p> @enderror
+                        <p x-show="cpfError" x-text="cpfError" x-cloak class="text-red-400 text-xs font-bold"></p>
                     </div>
 
                     <div class="sm:col-span-2">

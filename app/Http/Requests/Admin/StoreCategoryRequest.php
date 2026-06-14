@@ -13,7 +13,7 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string', 'max:255', 'unique:categories,name'],
+            'name'        => ['required', 'string', 'max:30', 'unique:categories,name'],
             'description' => ['nullable', 'string', 'max:1000'],
             'priority'    => ['required', Rule::enum(Priority::class)],
             'sla_hours'   => ['required', 'integer', 'min:1', 'max:8760'],

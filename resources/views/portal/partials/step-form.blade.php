@@ -78,13 +78,13 @@
                              x-transition:enter-end="opacity-100 scale-100"
                              class="flex justify-center py-2">
                             <button type="button" @click="showCategories = true"
-                                    class="group p-6 rounded-2xl border bg-primary-variant/10 border-primary-variant/50 shadow-[0_0_20px_rgba(23,162,184,0.15)] flex flex-col items-center justify-center gap-3 transition-all hover:bg-primary-variant/20 hover:border-primary-variant min-w-[200px]">
+                                    class="group p-6 rounded-2xl border bg-primary-variant/10 border-primary-variant/50 shadow-[0_0_20px_rgba(23,162,184,0.15)] flex flex-col items-center justify-center gap-3 transition-all hover:bg-primary-variant/20 hover:border-primary-variant w-full max-w-xs overflow-hidden">
                                 <div class="bg-primary-variant text-white p-2 rounded-lg shadow-lg">
                                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <span class="text-sm font-black text-white uppercase tracking-tighter" x-text="formData.category_name"></span>
+                                <span class="text-sm font-black text-white uppercase tracking-tighter text-center break-words w-full" x-text="formData.category_name"></span>
                                 <span class="text-[10px] text-primary-variant font-black uppercase tracking-[0.2em] opacity-80 underline underline-offset-4">Toque para trocar</span>
                             </button>
                         </div>
@@ -166,7 +166,7 @@
                 <div class="space-y-6">
                     <div class="space-y-3">
                         <x-ui.label value="Endereço aproximado" class="text-zinc-500 ml-1" />
-                        <x-ui.input x-model="formData.address" placeholder="Rua, Número, Bairro..." class="w-full">
+                        <x-ui.input x-model="formData.address" placeholder="Rua, Número, Bairro..." maxlength="255" class="w-full">
                             <x-slot:icon>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,7 +185,7 @@
 
                     <div class="space-y-3">
                         <x-ui.label value="Ponto de Referência" class="text-zinc-500 ml-1" />
-                        <x-ui.input x-model="formData.reference_point" placeholder="Próximo a..." class="w-full">
+                        <x-ui.input x-model="formData.reference_point" placeholder="Próximo a..." maxlength="255" class="w-full">
                             <x-slot:icon>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -241,7 +241,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             <x-ui.label value="Nome Completo" class="text-zinc-500 ml-1" />
-                            <x-ui.input x-model="formData.name" placeholder="Seu nome" class="w-full">
+                            <x-ui.input x-model="formData.name" placeholder="Seu nome" maxlength="255" class="w-full">
                                 <x-slot:icon>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -254,7 +254,7 @@
                         </div>
                         <div class="space-y-3">
                             <x-ui.label value="CPF (opcional)" class="text-zinc-500 ml-1" />
-                            <x-ui.input x-model="formData.cpf" placeholder="000.000.000-00" class="w-full">
+                            <x-ui.input x-model="formData.cpf" @input="maskCpf($event)" @blur="validateCpf()" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" class="w-full">
                                 <x-slot:icon>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -262,13 +262,16 @@
                                     </svg>
                                 </x-slot:icon>
                             </x-ui.input>
+                            <p x-show="cpfError || hasError('citizen_cpf')"
+                               x-text="cpfError || getError('citizen_cpf')"
+                               class="text-red-400 text-xs font-bold mt-1 px-1"></p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             <x-ui.label value="E-mail" class="text-zinc-500 ml-1" />
-                            <x-ui.input x-model="formData.email" type="email" placeholder="seu@email.com" class="w-full">
+                            <x-ui.input x-model="formData.email" type="email" placeholder="seu@email.com" maxlength="255" class="w-full">
                                 <x-slot:icon>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -281,7 +284,7 @@
                         </div>
                         <div class="space-y-3">
                             <x-ui.label value="Telefone (opcional)" class="text-zinc-500 ml-1" />
-                            <x-ui.input x-model="formData.phone" placeholder="(00) 00000-0000" class="w-full">
+                            <x-ui.input x-model="formData.phone" @input="maskPhone($event)" placeholder="(00) 00000-0000" maxlength="15" inputmode="numeric" class="w-full">
                                 <x-slot:icon>
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

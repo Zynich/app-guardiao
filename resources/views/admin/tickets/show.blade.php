@@ -51,9 +51,9 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Endereço</p>
-                            <p class="text-sm font-bold text-white">{{ $ticket->address }}</p>
+                            <p class="text-sm font-bold text-white break-words">{{ $ticket->address }}</p>
                             @if($ticket->reference_point)
-                                <p class="text-xs text-zinc-500 mt-0.5">{{ $ticket->reference_point }}</p>
+                                <p class="text-xs text-zinc-500 mt-0.5 break-words">{{ $ticket->reference_point }}</p>
                             @endif
                         </div>
                         <div>
@@ -66,7 +66,7 @@
 
                     <div class="mt-5 pt-5 border-t border-zinc-800/70">
                         <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Descrição</p>
-                        <p class="text-sm text-zinc-300 leading-relaxed">{{ $ticket->description }}</p>
+                        <p class="text-sm text-zinc-300 leading-relaxed break-words">{{ $ticket->description }}</p>
                     </div>
                 </div>
             </x-admin.section-card>
@@ -77,11 +77,11 @@
                     <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Nome</p>
-                            <p class="text-sm font-bold text-white">{{ $ticket->citizen_name }}</p>
+                            <p class="text-sm font-bold text-white break-words">{{ $ticket->citizen_name }}</p>
                         </div>
                         <div>
                             <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">E-mail</p>
-                            <p class="text-sm font-bold text-white">{{ $ticket->citizen_email }}</p>
+                            <p class="text-sm font-bold text-white break-words">{{ $ticket->citizen_email }}</p>
                         </div>
                         @if($ticket->citizen_phone)
                             <div>
@@ -119,9 +119,16 @@
             <x-admin.section-card title="Adicionar Comentário">
                 <form method="POST" action="{{ route('admin.tickets.comments', $ticket) }}" class="p-5 space-y-4">
                     @csrf
-                    <textarea name="comment" rows="3" required
-                              placeholder="Escreva um comentário..."
-                              class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-primary-variant focus:ring-primary-variant resize-none transition-all">{{ old('comment') }}</textarea>
+                    <div x-data="{ count: {{ strlen(old('comment', '')) }} }">
+                        <div class="flex items-center justify-between mb-1">
+                            <span></span>
+                            <span class="text-[10px] text-zinc-600" x-text="count + '/2000'"></span>
+                        </div>
+                        <textarea name="comment" rows="3" required maxlength="2000"
+                                  @input="count = $event.target.value.length"
+                                  placeholder="Escreva um comentário..."
+                                  class="w-full bg-surface-darker border border-zinc-700 text-white rounded-xl px-4 py-3 text-sm placeholder:text-zinc-600 focus:border-primary-variant focus:ring-primary-variant resize-none transition-all">{{ old('comment') }}</textarea>
+                    </div>
 
                     @if(auth()->user()->hasRole(\App\Enums\UserRole::ADMIN, \App\Enums\UserRole::DESPACHANTE))
                         <label class="flex items-center gap-3 cursor-pointer group">
@@ -222,7 +229,7 @@
                                             @endif
                                         @endif
                                         @if($log->comment)
-                                            <p class="text-xs text-zinc-400 mt-1 leading-relaxed">{{ $log->comment }}</p>
+                                            <p class="text-xs text-zinc-400 mt-1 leading-relaxed break-words">{{ $log->comment }}</p>
                                         @endif
                                         <p class="text-[10px] text-zinc-600 mt-1">
                                             {{ $log->user?->name ?? 'Cidadão' }} · {{ $log->created_at->format('d/m/Y H:i') }}

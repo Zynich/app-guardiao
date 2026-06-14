@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\UserRole;
+use App\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -20,7 +21,7 @@ class StoreUserRequest extends FormRequest
             'role'         => ['required', Rule::enum(UserRole::class)],
             'badge_number' => ['nullable', 'string', 'max:20', 'unique:users,badge_number'],
             'phone'        => ['nullable', 'string', 'max:20'],
-            'cpf'          => ['nullable', 'string', 'max:14', 'unique:users,cpf'],
+            'cpf'          => ['nullable', 'string', 'max:14', 'unique:users,cpf', new ValidCpf()],
             'is_active'    => ['boolean'],
         ];
     }

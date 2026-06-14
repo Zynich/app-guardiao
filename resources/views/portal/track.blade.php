@@ -88,14 +88,14 @@
                         </div>
                         <div>
                             <p class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1">Endereço</p>
-                            <p class="text-white font-bold">{{ $ticket->address }}</p>
+                            <p class="text-white font-bold break-words">{{ $ticket->address }}</p>
                             @if($ticket->reference_point)
-                                <p class="text-zinc-500 text-sm">{{ $ticket->reference_point }}</p>
+                                <p class="text-zinc-500 text-sm break-words">{{ $ticket->reference_point }}</p>
                             @endif
                         </div>
                         <div class="sm:col-span-2">
                             <p class="text-xs font-black text-zinc-500 uppercase tracking-widest mb-1">Descrição</p>
-                            <p class="text-zinc-300 font-medium leading-relaxed">{{ $ticket->description }}</p>
+                            <p class="text-zinc-300 font-medium leading-relaxed break-words">{{ $ticket->description }}</p>
                         </div>
                     </div>
 
@@ -135,7 +135,7 @@
                                                 @endif
                                             @endif
                                             @if($log->comment)
-                                                <p class="text-zinc-400 text-sm mt-1 font-medium">{{ $log->comment }}</p>
+                                                <p class="text-zinc-400 text-sm mt-1 font-medium break-words">{{ $log->comment }}</p>
                                             @endif
                                             <p class="text-zinc-600 text-xs mt-1.5 font-medium">
                                                 {{ $log->created_at->format('d/m/Y \à\s H:i') }}

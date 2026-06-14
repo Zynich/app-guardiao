@@ -15,6 +15,7 @@ use App\Models\TicketMedia;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -63,39 +64,44 @@ class TicketController extends Controller
         $protocol = $this->generateProtocol();
         $dueDate  = $category->sla_hours ? now()->addHours($category->sla_hours) : null;
 
-        $ticket = Ticket::create([
-            'protocol'        => $protocol,
-            'citizen_name'    => $request->citizen_name,
-            'citizen_email'   => $request->citizen_email,
-            'citizen_phone'   => $request->citizen_phone,
-            'citizen_cpf'     => $request->citizen_cpf,
-            'category_id'     => $category->id,
-            'user_id'         => $request->user_id,
-            'created_by_id'   => auth()->id(),
-            'status'          => TicketStatus::PENDENTE_TRIAGEM,
-            'priority'        => $request->priority ?? $category->priority,
-            'description'     => $request->description,
-            'address'         => $request->address,
-            'reference_point' => $request->reference_point,
-            'latitude'        => $request->latitude,
-            'longitude'       => $request->longitude,
-            'due_date'        => $dueDate,
-        ]);
+        try {
+            $ticket = Ticket::create([
+                'protocol'        => $protocol,
+                'citizen_name'    => $request->citizen_name,
+                'citizen_email'   => $request->citizen_email,
+                'citizen_phone'   => $request->citizen_phone,
+                'citizen_cpf'     => $request->citizen_cpf,
+                'category_id'     => $category->id,
+                'user_id'         => $request->user_id,
+                'created_by_id'   => auth()->id(),
+                'status'          => TicketStatus::PENDENTE_TRIAGEM,
+                'priority'        => $request->priority ?? $category->priority,
+                'description'     => $request->description,
+                'address'         => $request->address,
+                'reference_point' => $request->reference_point,
+                'latitude'        => $request->latitude,
+                'longitude'       => $request->longitude,
+                'due_date'        => $dueDate,
+            ]);
 
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store("tickets/{$protocol}", 'public');
-                TicketMedia::create([
-                    'ticket_id' => $ticket->id,
-                    'user_id'   => auth()->id(),
-                    'file_path' => $path,
-                    'file_type' => $photo->getMimeType(),
-                ]);
-                TicketLog::logMediaAdded($ticket->id, auth()->id(), $photo->getClientOriginalName());
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    $path = $photo->store("tickets/{$protocol}", 'public');
+                    TicketMedia::create([
+                        'ticket_id' => $ticket->id,
+                        'user_id'   => auth()->id(),
+                        'file_path' => $path,
+                        'file_type' => $photo->getMimeType(),
+                    ]);
+                    TicketLog::logMediaAdded($ticket->id, auth()->id(), $photo->getClientOriginalName());
+                }
             }
-        }
 
-        TicketLog::logCreated($ticket->id, auth()->id());
+            TicketLog::logCreated($ticket->id, auth()->id());
+        } catch (\Throwable $e) {
+            Log::error('Erro ao criar ocorrência: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['general' => 'Erro ao salvar a ocorrência. Tente novamente.']);
+        }
 
         return redirect()->route('admin.tickets.show', $ticket)
             ->with('success', "Ocorrência {$protocol} criada com sucesso.");
