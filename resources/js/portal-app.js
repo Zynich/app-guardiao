@@ -219,6 +219,11 @@ export function portalApp() {
                 const data = await response.json();
 
                 if (!response.ok) {
+                    if (response.status === 429) {
+                        alert('Muitas tentativas em pouco tempo. Aguarde 60 minutos e tente novamente.');
+                        this.loading = false;
+                        return;
+                    }
                     this.errors = data.errors ?? {};
                     const step1Fields = ['category_id', 'description'];
                     const step2Fields = ['address', 'reference_point'];
