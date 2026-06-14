@@ -55,9 +55,13 @@ class TicketController extends Controller
 
         TicketLog::logCreated($ticket->id);
 
-        // Carrega a categoria para o e-mail e envia confirmação ao cidadão
-        $ticket->load('category');
-        Mail::to($ticket->citizen_email)->send(new TicketProtocolMail($ticket));
+        // Envia confirmação ao cidadão — falha silenciosa para não bloquear o protocolo
+        try {
+            $ticket->load('category');
+            Mail::to($ticket->citizen_email)->send(new TicketProtocolMail($ticket));
+        } catch (\Throwable $e) {
+            Log::warning('Falha ao enviar e-mail de protocolo: ' . $e->getMessage(), ['ticket' => $ticket->id]);
+        }
 
         return response()->json(['protocol' => $protocol], 201);
     }
