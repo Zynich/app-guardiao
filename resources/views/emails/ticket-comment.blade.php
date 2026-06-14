@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Protocolo {{ $ticket->protocol }} — Guardião</title>
+    <title>Nova Atualização — {{ $ticket->protocol }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #f4f4f5; }
@@ -16,10 +16,9 @@
         .body { padding: 32px; }
         .greeting { font-size: 15px; color: #a1a1aa; margin-bottom: 24px; line-height: 1.6; word-break: break-word; overflow-wrap: break-word; }
         .greeting strong { word-break: break-word; overflow-wrap: break-word; }
-        .protocol-box { background: #0a0a0a; border: 1px solid rgba(23,162,184,0.3); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 28px; }
-        .protocol-label { font-size: 10px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
-        .protocol-number { font-size: 28px; font-weight: 900; color: #17A2B8; letter-spacing: 0.1em; }
-        .protocol-hint { font-size: 11px; color: #52525b; margin-top: 6px; }
+        .comment-box { background: #0a0a0a; border-left: 3px solid #17A2B8; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-bottom: 28px; }
+        .comment-label { font-size: 10px; font-weight: 700; color: #17A2B8; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+        .comment-text { font-size: 14px; color: #d4d4d8; line-height: 1.7; word-break: break-word; overflow-wrap: break-word; }
         .details { background: #0a0a0a; border: 1px solid rgba(63,63,70,0.4); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
         .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(63,63,70,0.3); }
         .detail-row:last-child { border-bottom: none; }
@@ -34,58 +33,42 @@
 <body>
 <div class="wrapper">
     <div class="card">
-        <!-- Header -->
         <div class="header">
             <div class="header-icon">
                 <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                 </svg>
             </div>
-            <h1>Relato Registrado</h1>
-            <p>Sua solicitação foi recebida com sucesso</p>
+            <h1>Nova Atualização</h1>
+            <p>A equipe Guardião adicionou um comentário</p>
         </div>
 
-        <!-- Body -->
         <div class="body">
             <p class="greeting">
                 Olá, <strong>{{ $ticket->citizen_name }}</strong>.<br>
-                Seu relato foi registrado no sistema Guardião. Guarde o número de protocolo abaixo para acompanhar o andamento.
+                A equipe responsável pela sua solicitação adicionou uma atualização pública.
             </p>
 
-            <!-- Protocolo em destaque -->
-            <div class="protocol-box">
-                <p class="protocol-label">Número do Protocolo</p>
-                <p class="protocol-number">{{ $ticket->protocol }}</p>
-                <p class="protocol-hint">Use este número para consultar o status da sua solicitação</p>
+            <div class="comment-box">
+                <p class="comment-label">Comentário da equipe</p>
+                <p class="comment-text">{{ $comment }}</p>
             </div>
 
-            <!-- Detalhes do chamado -->
             <div class="details">
                 <div class="detail-row">
-                    <span class="detail-label">Categoria</span>
-                    <span class="detail-value">{{ $ticket->category?->name ?? '—' }}</span>
+                    <span class="detail-label">Protocolo</span>
+                    <span class="detail-value">{{ $ticket->protocol }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Endereço</span>
-                    <span class="detail-value">{{ \Illuminate\Support\Str::limit($ticket->address, 50) }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status Inicial</span>
+                    <span class="detail-label">Status atual</span>
                     <span class="detail-value">{{ $ticket->status->label() }}</span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Data de Abertura</span>
-                    <span class="detail-value">{{ $ticket->created_at->format('d/m/Y \à\s H:i') }}</span>
+                    <span class="detail-label">Atualizado em</span>
+                    <span class="detail-value">{{ now()->format('d/m/Y \à\s H:i') }}</span>
                 </div>
-                @if($ticket->due_date)
-                <div class="detail-row">
-                    <span class="detail-label">Prazo SLA</span>
-                    <span class="detail-value">{{ $ticket->due_date->format('d/m/Y H:i') }}</span>
-                </div>
-                @endif
             </div>
 
-            <!-- CTA -->
             <div class="cta">
                 <a href="{{ url('/protocolo?protocol=' . $ticket->protocol) }}">
                     Acompanhar Solicitação
@@ -93,7 +76,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="footer">
             <p>
                 Este e-mail foi gerado automaticamente pelo sistema Guardião.<br>

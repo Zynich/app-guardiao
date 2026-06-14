@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCommentRequest;
 use App\Http\Requests\Admin\StoreTicketRequest;
 use App\Http\Requests\Admin\UpdateTicketStatusRequest;
+use App\Mail\TicketCommentMail;
+use App\Mail\TicketProtocolMail;
+use App\Mail\TicketStatusMail;
 use App\Models\Category;
 use App\Models\Ticket;
 use App\Models\TicketLog;
@@ -16,6 +19,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -103,6 +107,14 @@ class TicketController extends Controller
             return back()->withInput()->withErrors(['general' => 'Erro ao salvar a ocorrência. Tente novamente.']);
         }
 
+        if ($ticket->citizen_email) {
+            try {
+                Mail::to($ticket->citizen_email)->send(new TicketProtocolMail($ticket));
+            } catch (\Throwable $e) {
+                Log::warning('Falha ao enviar e-mail de protocolo (admin): ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('admin.tickets.show', $ticket)
             ->with('success', "Ocorrência {$protocol} criada com sucesso.");
     }
@@ -138,6 +150,14 @@ class TicketController extends Controller
         $ticket->update(['status' => $newStatus]);
         TicketLog::logStatus($ticket->id, auth()->id(), $oldStatus, $newStatus->value);
 
+        if ($ticket->citizen_email) {
+            try {
+                Mail::to($ticket->citizen_email)->send(new TicketStatusMail($ticket, $newStatus));
+            } catch (\Throwable $e) {
+                Log::warning('Falha ao enviar e-mail de status: ' . $e->getMessage());
+            }
+        }
+
         return back()->with('success', 'Status atualizado com sucesso.');
     }
 
@@ -150,6 +170,14 @@ class TicketController extends Controller
             : false;
 
         TicketLog::logComment($ticket->id, auth()->id(), $request->comment, $isPublic);
+
+        if ($isPublic && $ticket->citizen_email) {
+            try {
+                Mail::to($ticket->citizen_email)->send(new TicketCommentMail($ticket, $request->comment));
+            } catch (\Throwable $e) {
+                Log::warning('Falha ao enviar e-mail de comentário: ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', 'Comentário adicionado.');
     }
