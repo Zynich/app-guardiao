@@ -392,18 +392,14 @@
             <!-- Finalizar (step 3) -->
             <x-ui.button x-show="step === 3" type="button" @click="submitTicket()" x-bind:disabled="loading || photoFeedback > 0"
                          class="w-full sm:w-auto px-12 py-3.5">
-                <span x-show="!loading" class="flex items-center gap-2">
-                    <template x-if="photoFeedback > 0">
-                        <span>Aguarde...</span>
-                    </template>
-                    <template x-if="photoFeedback === 0">
-                        <span class="flex items-center gap-2">
-                            Finalizar Relato
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                        </span>
-                    </template>
+                <span x-show="!loading && photoFeedback === 0" class="flex items-center gap-2">
+                    Finalizar Relato
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </span>
+                <span x-show="!loading && photoFeedback > 0" x-cloak class="flex items-center gap-2">
+                    Aguarde...
                 </span>
                 <span x-show="loading" x-cloak class="flex items-center gap-2">
                     <x-ui.spinner class="w-4 h-4 text-white" />

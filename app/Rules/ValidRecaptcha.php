@@ -28,8 +28,14 @@ class ValidRecaptcha implements ValidationRule
 
             $body = $response->json();
 
-            if (! ($body['success'] ?? false) || ($body['score'] ?? 0) < $minScore) {
+            // Só bloqueia quando a verificação foi bem-sucedida mas o score indica bot.
+            // success: false (token expirado, duplicado, erro de rede da API) → passa sem bloquear.
+            if (($body['success'] ?? false) && ($body['score'] ?? 1.0) < $minScore) {
                 $fail('Verificação de segurança falhou. Tente novamente.');
+            }
+
+            if (! ($body['success'] ?? false)) {
+                Log::warning('reCAPTCHA: success=false', ['error-codes' => $body['error-codes'] ?? []]);
             }
         } catch (\Throwable $e) {
             Log::warning('reCAPTCHA verification error: ' . $e->getMessage());
