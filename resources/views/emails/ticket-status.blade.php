@@ -20,9 +20,9 @@
         .status-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 10px; }
         .status-value { font-size: 20px; font-weight: 900; letter-spacing: -0.3px; }
         .details { background: #0a0a0a; border: 1px solid rgba(63,63,70,0.4); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
-        .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(63,63,70,0.3); }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-label { font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; flex-shrink: 0; }
+        .detail-row td { padding: 8px 0; border-bottom: 1px solid rgba(63,63,70,0.3); vertical-align: top; }
+        .detail-row:last-child td { border-bottom: none; }
+        .detail-label { font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; width: 45%; }
         .detail-value { font-size: 13px; font-weight: 600; color: #e4e4e7; text-align: right; word-break: break-word; overflow-wrap: break-word; }
         .cta { text-align: center; margin-bottom: 28px; }
         .cta a { display: inline-block; background: linear-gradient(135deg, #186073, #17A2B8); color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; }
@@ -45,7 +45,7 @@
 
         <div class="body">
             <p class="greeting">
-                Olá, <strong>{{ $ticket->citizen_name }}</strong>.<br>
+                Olá, <strong>{{ ucfirst($ticket->citizen_name) }}</strong>.<br>
                 O status da sua solicitação foi atualizado. Confira abaixo.
             </p>
 
@@ -66,18 +66,20 @@
             </div>
 
             <div class="details">
-                <div class="detail-row">
-                    <span class="detail-label">Protocolo</span>
-                    <span class="detail-value">{{ $ticket->protocol }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Categoria</span>
-                    <span class="detail-value">{{ $ticket->category?->name ?? '—' }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Atualizado em</span>
-                    <span class="detail-value">{{ now()->format('d/m/Y \à\s H:i') }}</span>
-                </div>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr class="detail-row">
+                        <td class="detail-label">Protocolo</td>
+                        <td class="detail-value">{{ $ticket->protocol }}</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td class="detail-label">Categoria</td>
+                        <td class="detail-value">{{ $ticket->category?->name ?? '—' }}</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td class="detail-label">Atualizado em</td>
+                        <td class="detail-value">{{ now()->format('d/m/Y \à\s H:i') }}</td>
+                    </tr>
+                </table>
             </div>
 
             <div class="cta">

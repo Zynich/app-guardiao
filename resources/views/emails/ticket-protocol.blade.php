@@ -21,9 +21,9 @@
         .protocol-number { font-size: 28px; font-weight: 900; color: #17A2B8; letter-spacing: 0.1em; }
         .protocol-hint { font-size: 11px; color: #52525b; margin-top: 6px; }
         .details { background: #0a0a0a; border: 1px solid rgba(63,63,70,0.4); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
-        .detail-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(63,63,70,0.3); }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-label { font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; flex-shrink: 0; }
+        .detail-row td { padding: 8px 0; border-bottom: 1px solid rgba(63,63,70,0.3); vertical-align: top; }
+        .detail-row:last-child td { border-bottom: none; }
+        .detail-label { font-size: 11px; font-weight: 700; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; width: 45%; }
         .detail-value { font-size: 13px; font-weight: 600; color: #e4e4e7; text-align: right; word-break: break-word; overflow-wrap: break-word; }
         .cta { text-align: center; margin-bottom: 28px; }
         .cta a { display: inline-block; background: linear-gradient(135deg, #186073, #17A2B8); color: #fff; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; }
@@ -48,7 +48,7 @@
         <!-- Body -->
         <div class="body">
             <p class="greeting">
-                Olá, <strong>{{ $ticket->citizen_name }}</strong>.<br>
+                Olá, <strong>{{ ucfirst($ticket->citizen_name) }}</strong>.<br>
                 Seu relato foi registrado no sistema Guardião. Guarde o número de protocolo abaixo para acompanhar o andamento.
             </p>
 
@@ -61,28 +61,30 @@
 
             <!-- Detalhes do chamado -->
             <div class="details">
-                <div class="detail-row">
-                    <span class="detail-label">Categoria</span>
-                    <span class="detail-value">{{ $ticket->category?->name ?? '—' }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Endereço</span>
-                    <span class="detail-value">{{ \Illuminate\Support\Str::limit($ticket->address, 50) }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status Inicial</span>
-                    <span class="detail-value">{{ $ticket->status->label() }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Data de Abertura</span>
-                    <span class="detail-value">{{ $ticket->created_at->format('d/m/Y \à\s H:i') }}</span>
-                </div>
-                @if($ticket->due_date)
-                <div class="detail-row">
-                    <span class="detail-label">Prazo SLA</span>
-                    <span class="detail-value">{{ $ticket->due_date->format('d/m/Y H:i') }}</span>
-                </div>
-                @endif
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr class="detail-row">
+                        <td class="detail-label">Categoria</td>
+                        <td class="detail-value">{{ $ticket->category?->name ?? '—' }}</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td class="detail-label">Endereço</td>
+                        <td class="detail-value">{{ \Illuminate\Support\Str::limit($ticket->address, 50) }}</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td class="detail-label">Status Inicial</td>
+                        <td class="detail-value">{{ $ticket->status->label() }}</td>
+                    </tr>
+                    <tr class="detail-row">
+                        <td class="detail-label">Data de Abertura</td>
+                        <td class="detail-value">{{ $ticket->created_at->format('d/m/Y \à\s H:i') }}</td>
+                    </tr>
+                    @if($ticket->due_date)
+                    <tr class="detail-row">
+                        <td class="detail-label">Prazo SLA</td>
+                        <td class="detail-value">{{ $ticket->due_date->format('d/m/Y H:i') }}</td>
+                    </tr>
+                    @endif
+                </table>
             </div>
 
             <!-- CTA -->
