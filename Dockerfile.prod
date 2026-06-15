@@ -19,6 +19,12 @@ WORKDIR /var/www/html
 
 COPY . .
 
+RUN mkdir -p bootstrap/cache \
+        storage/framework/sessions \
+        storage/framework/views \
+        storage/framework/cache/data \
+        storage/logs
+
 RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && npm ci \
     && npm run build \
