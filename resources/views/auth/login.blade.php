@@ -16,9 +16,13 @@
 
                     <!-- Animated Error Notification (Unified Fluid Expansion/Contraction) -->
                     @if ($errors->any())
-                        <div 
+                        @php
+                            $errorMsg = $errors->first('email');
+                            $isDeactivated = str_contains($errorMsg, 'desativada');
+                        @endphp
+                        <div
                             x-show="showError"
-                            x-init="setTimeout(() => showError = false, 5000)"
+                            x-init="setTimeout(() => showError = false, {{ $isDeactivated ? 8000 : 5000 }})"
                             x-transition:enter="transition-all transform ease-out duration-700"
                             x-transition:enter-start="max-h-0 opacity-0 mb-0 -translate-y-4"
                             x-transition:enter-end="max-h-32 opacity-100 mb-8 translate-y-0"
@@ -35,10 +39,15 @@
                                     </svg>
                                 </div>
                                 <div class="flex flex-col text-left">
-                                    <span class="text-zinc-100 text-sm font-bold tracking-tight leading-tight">Usuário e/ou Senha incorretos</span>
-                                    <span class="text-zinc-500 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Tente novamente</span>
+                                    @if ($isDeactivated)
+                                        <span class="text-zinc-100 text-sm font-bold tracking-tight leading-tight">Conta desativada</span>
+                                        <span class="text-zinc-500 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Contate o administrador</span>
+                                    @else
+                                        <span class="text-zinc-100 text-sm font-bold tracking-tight leading-tight">Usuário e/ou Senha incorretos</span>
+                                        <span class="text-zinc-500 text-[10px] uppercase tracking-wider font-semibold mt-0.5">Tente novamente</span>
+                                    @endif
                                 </div>
-                                
+
                                 <!-- Close Button -->
                                 <button type="button" @click="showError = false" class="absolute top-5 right-5 text-zinc-600 hover:text-zinc-300 transition-colors pointer-events-auto">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
