@@ -34,11 +34,7 @@
 <div class="wrapper">
     <div class="card">
         <div class="header">
-            <div class="header-icon">
-                <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                </svg>
-            </div>
+            <div class="header-icon" style="font-size: 26px; line-height: 56px;">💬</div>
             <h1>Nova Atualização</h1>
             <p>A equipe Guardião adicionou um comentário</p>
         </div>
