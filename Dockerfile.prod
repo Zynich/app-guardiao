@@ -1,0 +1,34 @@
+FROM php:8.4-fpm-alpine
+
+RUN apk add --no-cache \
+    nginx \
+    nodejs \
+    npm \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql opcache gd zip exif \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && npm ci \
+    && npm run build \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/start.sh /start.sh
+COPY docker/ca.pem /etc/ssl/certs/aiven-ca.pem
+RUN chmod +x /start.sh
+
+EXPOSE 80
+CMD ["/start.sh"]
