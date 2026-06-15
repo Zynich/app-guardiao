@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -21,6 +22,7 @@ class TicketSubmissionTest extends TestCase
     {
         parent::setUp();
         $this->category = Category::factory()->create();
+        Cache::flush();
     }
 
     private function validPayload(array $overrides = []): array
@@ -74,7 +76,7 @@ class TicketSubmissionTest extends TestCase
         $this->postJson('/ocorrencias', $this->validPayload())
              ->assertCreated();
 
-        Mail::assertSent(TicketProtocolMail::class, function ($mail) {
+        Mail::assertQueued(TicketProtocolMail::class, function ($mail) {
             return $mail->hasTo('joao@example.com');
         });
     }
@@ -120,7 +122,7 @@ class TicketSubmissionTest extends TestCase
     public function test_upload_de_foto_e_salvo(): void
     {
         Mail::fake();
-        Storage::fake('public');
+        Storage::fake('s3');
 
         $response = $this->postJson('/ocorrencias', array_merge(
             $this->validPayload(),
@@ -137,7 +139,7 @@ class TicketSubmissionTest extends TestCase
     {
         Mail::fake();
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $this->postJson('/ocorrencias', $this->validPayload())->assertCreated();
         }
 
