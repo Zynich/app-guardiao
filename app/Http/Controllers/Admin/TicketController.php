@@ -90,7 +90,7 @@ class TicketController extends Controller
 
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store("tickets/{$protocol}", 'public');
+                    $path = $photo->store("tickets/{$protocol}", 's3');
                     TicketMedia::create([
                         'ticket_id' => $ticket->id,
                         'user_id'   => auth()->id(),

@@ -104,9 +104,10 @@
                 <x-admin.section-card title="Fotos da Ocorrência">
                     <div class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                         @foreach($ticket->media as $media)
-                            <a href="{{ Storage::url($media->file_path) }}" target="_blank"
+                            @php $mediaUrl = Storage::temporaryUrl($media->file_path, now()->addHour()) @endphp
+                            <a href="{{ $mediaUrl }}" target="_blank"
                                class="aspect-square rounded-xl overflow-hidden border border-zinc-700 hover:border-primary-variant transition-all group">
-                                <img src="{{ Storage::url($media->file_path) }}"
+                                <img src="{{ $mediaUrl }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                      alt="Foto da ocorrência">
                             </a>
