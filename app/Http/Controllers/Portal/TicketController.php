@@ -64,7 +64,7 @@ class TicketController extends Controller
         // Envia confirmação ao cidadão — falha silenciosa para não bloquear o protocolo
         try {
             $ticket->load('category');
-            Mail::to($ticket->citizen_email)->queue(new TicketProtocolMail($ticket));
+            Mail::to($ticket->citizen_email)->send(new TicketProtocolMail($ticket));
         } catch (\Throwable $e) {
             Log::warning('Falha ao enviar e-mail de protocolo: ' . $e->getMessage(), ['ticket' => $ticket->id]);
         }

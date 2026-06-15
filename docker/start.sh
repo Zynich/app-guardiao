@@ -9,5 +9,4 @@ php artisan migrate --force
 php artisan db:seed --force
 
 php-fpm -D
-php artisan queue:work --daemon --sleep=3 --tries=3 --timeout=60 &
 exec nginx -g "daemon off;"
