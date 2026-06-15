@@ -10,8 +10,7 @@
         .wrapper { max-width: 560px; margin: 32px auto; padding: 0 16px; }
         .card { background: #161616; border: 1px solid rgba(63,63,70,0.5); border-radius: 20px; overflow: hidden; }
         .header { background: linear-gradient(135deg, #186073, #17A2B8); padding: 36px 32px; text-align: center; }
-        .header-icon { width: 56px; height: 56px; background: rgba(255,255,255,0.15); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-        .header h1 { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+.header h1 { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
         .header p { font-size: 14px; color: rgba(255,255,255,0.75); margin-top: 6px; }
         .body { padding: 32px; }
         .greeting { font-size: 15px; color: #a1a1aa; margin-bottom: 24px; line-height: 1.6; word-break: break-word; overflow-wrap: break-word; }
@@ -34,7 +33,6 @@
 <div class="wrapper">
     <div class="card">
         <div class="header">
-            <div class="header-icon" style="font-size: 26px; line-height: 56px;">🔄</div>
             <h1>Status Atualizado</h1>
             <p>Sua solicitação recebeu uma atualização</p>
         </div>
