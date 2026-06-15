@@ -109,7 +109,7 @@ class TicketController extends Controller
 
         if ($ticket->citizen_email) {
             try {
-                Mail::to($ticket->citizen_email)->send(new TicketProtocolMail($ticket));
+                Mail::to($ticket->citizen_email)->queue(new TicketProtocolMail($ticket));
             } catch (\Throwable $e) {
                 Log::warning('Falha ao enviar e-mail de protocolo (admin): ' . $e->getMessage());
             }
@@ -152,7 +152,7 @@ class TicketController extends Controller
 
         if ($ticket->citizen_email) {
             try {
-                Mail::to($ticket->citizen_email)->send(new TicketStatusMail($ticket, $newStatus));
+                Mail::to($ticket->citizen_email)->queue(new TicketStatusMail($ticket, $newStatus));
             } catch (\Throwable $e) {
                 Log::warning('Falha ao enviar e-mail de status: ' . $e->getMessage());
             }
@@ -173,7 +173,7 @@ class TicketController extends Controller
 
         if ($isPublic && $ticket->citizen_email) {
             try {
-                Mail::to($ticket->citizen_email)->send(new TicketCommentMail($ticket, $request->comment));
+                Mail::to($ticket->citizen_email)->queue(new TicketCommentMail($ticket, $request->comment));
             } catch (\Throwable $e) {
                 Log::warning('Falha ao enviar e-mail de comentário: ' . $e->getMessage());
             }
